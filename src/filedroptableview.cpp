@@ -111,12 +111,14 @@ void FileDropTableView::dropEvent(QDropEvent *event)
         }
 
         if (destinationRow == sourceRow || destinationRow == sourceRow + 1) {
-            event->acceptProposedAction();
+            event->setDropAction(Qt::CopyAction);
+            event->accept();
             return;
         }
 
         emit rowMoveRequested(sourceRow, destinationRow);
-        event->acceptProposedAction();
+        event->setDropAction(Qt::CopyAction);
+        event->accept();
     } else {
         event->ignore();
     }
