@@ -30,6 +30,9 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+protected:
+    void closeEvent(QCloseEvent *event) override;
+
 signals:
     void processingStarted();
     void processingPaused();
@@ -57,6 +60,7 @@ private:
     bool changeLanguage(const QString &locale);
     void handleFilesDropped(const QStringList &fileNames);
     void addFilesWithConfig(const QStringList &fileNames);
+    void addTask(const TaskConfig &taskConfig);
     void moveTaskRow(int sourceRow, int destinationRow);
     void setTaskRowWidgets(int row, const TaskRowWidgetState &state = TaskRowWidgetState());
     void addTasks();
@@ -85,11 +89,12 @@ private:
     bool m_procStarted = false;
     bool m_procAborted = false;
     bool m_hasErrors = false;
+    bool m_closePending = false;
     Timer m_timer;
 
 private slots:
     // Custom slots
-    void on_progressUpdate(int totalFrames, int processedFrames);
+    void on_progressUpdate(int totalFrames, int processedFrames, int recoveredFrames);
     void on_videoProcessingFinished(bool success, std::filesystem::path inputFilePath);
 
     // File menu

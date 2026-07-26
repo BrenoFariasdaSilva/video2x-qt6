@@ -1,11 +1,7 @@
 #include "filedroptableview.h"
 
-#include <QCollator>
-#include <QFileInfo>
 #include <QItemSelectionModel>
 #include <QPainter>
-
-#include <algorithm>
 
 FileDropTableView::FileDropTableView(QWidget *parent)
     : QTableView(parent)
@@ -53,27 +49,6 @@ void FileDropTableView::dropEvent(QDropEvent *event)
                 fileNames << localFile;
             }
         }
-
-        QCollator collator;
-        collator.setNumericMode(true);
-        collator.setCaseSensitivity(Qt::CaseInsensitive);
-        std::sort(fileNames.begin(), fileNames.end(), [&collator](const QString &left,
-                                                                  const QString &right) {
-            const QString leftFileName = QFileInfo(left).fileName();
-            const QString rightFileName = QFileInfo(right).fileName();
-
-            const int fileNameCompare = collator.compare(leftFileName, rightFileName);
-            if (fileNameCompare != 0) {
-                return fileNameCompare < 0;
-            }
-
-            const int caseCompare = QString::compare(leftFileName, rightFileName, Qt::CaseSensitive);
-            if (caseCompare != 0) {
-                return caseCompare < 0;
-            }
-
-            return QString::compare(left, right, Qt::CaseSensitive) < 0;
-        });
 
         emit filesDropped(fileNames);
         event->acceptProposedAction();
